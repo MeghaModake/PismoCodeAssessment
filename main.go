@@ -2,20 +2,27 @@ package main
 
 import (
 	"fmt"
+	"net/http"
+	"pismo-code-assessment/handlers"
+	"pismo-code-assessment/services"
+
+	"github.com/gorilla/mux"
 )
 
-func main() {
-	fmt.Println("This is the server package.")
+func NewRouter() *mux.Router {
+	router := mux.NewRouter()
 
-	/*
-		 	var nd Doer
-			nd = NewMeghasTodo()
-			router := mux.NewRouter()
-			router.HandleFunc("/login", loginHanlder)
-			router.HandleFunc("/create", nd.CreateHandler).Methods("POST")
-			//router.HandleFunc("/{id}", GetHandler).Methods("GET")
-			router.Handle("/{id}", Authorizarion(nd.GetHandler))
-			http.ListenAndServe(":8080", router)
-			fmt.Println("Server is running on port 8080")
-	*/
+	accountService := services.NewAccountService()
+	ai := &handlers.AccountHandler{Service: accountService}
+
+	router.HandleFunc("/accounts", ai.CreateAccountsHandler).Methods("POST")
+	router.HandleFunc("/accounts/{accountId}", ai.GetAccountsByIDHandler).Methods("GET")
+
+	return router
+}
+func main() {
+
+	http.ListenAndServe(":8080", NewRouter())
+	fmt.Println("Server is running on port 8080")
+
 }
