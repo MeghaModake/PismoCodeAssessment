@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"pismo-code-assessment/datastruct"
 	"pismo-code-assessment/services"
@@ -12,10 +13,11 @@ import (
 
 type AccountHandler struct {
 	Service *services.AccountService
+	Logger  *log.Logger
 }
 
 func (a *AccountHandler) CreateAccountsHandler(w http.ResponseWriter, r *http.Request) {
-
+	a.Logger.Println("Received request to create account")
 	var inputdata datastruct.CreateAccountsRequest
 	if err := json.NewDecoder(r.Body).Decode(&inputdata); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -33,7 +35,7 @@ func (a *AccountHandler) CreateAccountsHandler(w http.ResponseWriter, r *http.Re
 }
 
 func (a *AccountHandler) GetAccountsByIDHandler(w http.ResponseWriter, r *http.Request) {
-
+	a.Logger.Println("Received request to get account by ID")
 	param := mux.Vars(r)
 	id := param["accountId"]
 

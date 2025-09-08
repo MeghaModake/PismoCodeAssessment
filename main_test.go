@@ -103,10 +103,10 @@ func TestCreateAndGetAccount(t *testing.T) {
 
 }
 
-/*func TestCreateAndGetTransaction(t *testing.T) {
+func TestCreateAndGetTransaction(t *testing.T) {
 	router := NewRouter()
 
-	tx := models.Transaction{ID: "t1", AccountID: "1", Amount: 50}
+	tx := datastruct.CreateTransactionRequest{Account_ID: "1", OperationType_ID: "1", Amount: 50}
 	body, _ := json.Marshal(tx)
 
 	// Create transaction

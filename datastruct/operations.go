@@ -15,15 +15,15 @@ var operations = map[int]string{
 }
 
 type CreateTransactionRequest struct {
-	OperationType_ID int `json:"operation_type_id"`
-	Account_ID       int `json:"account_id"`
-	Amount           int `json:"amount"`
+	OperationType_ID int     `json:"operation_type_id"`
+	Account_ID       int     `json:"account_id"`
+	Amount           float64 `json:"amount"`
 }
 
 type Transaction struct {
 	Transaction_ID   int
 	Account_ID       int
 	OperationType_ID int
-	Amount           int
+	Amount           float64
 	EventDate        time.Time
 }

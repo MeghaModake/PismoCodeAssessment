@@ -2,31 +2,34 @@ package services
 
 import (
 	"fmt"
+	"log"
 	"pismo-code-assessment/datastruct"
 )
 
 type AccountService struct {
-	owners    map[string]int
-	accounts  map[int]string
-	lastAccID int
+	Owners    map[string]int
+	Accounts  map[int]string
+	LastAccID int
+	Logger    *log.Logger
 }
 
-func NewAccountService() *AccountService {
+func NewAccountService(logger *log.Logger) *AccountService {
 	return &AccountService{
-		owners:    make(map[string]int),
-		accounts:  make(map[int]string),
-		lastAccID: 0,
+		Owners:    make(map[string]int),
+		Accounts:  make(map[int]string),
+		LastAccID: 0,
+		Logger:    logger,
 	}
 }
 
 func (as *AccountService) CreateAccount(input datastruct.CreateAccountsRequest) (datastruct.Account, error) {
 
-	accid := as.lastAccID + 1
-	if _, found := as.owners[input.Document_Number]; !found {
-		as.owners[input.Document_Number] = accid
-		as.accounts[accid] = input.Document_Number
-		as.lastAccID = accid
-		fmt.Print("Account created!")
+	accid := as.LastAccID + 1
+	if _, found := as.Owners[input.Document_Number]; !found {
+		as.Owners[input.Document_Number] = accid
+		as.Accounts[accid] = input.Document_Number
+		as.LastAccID = accid
+		as.Logger.Println("Account created!")
 		return datastruct.Account{Account_ID: accid, Document_Number: input.Document_Number}, nil
 	} else {
 		return datastruct.Account{}, fmt.Errorf("Account Already exists")
@@ -36,7 +39,7 @@ func (as *AccountService) CreateAccount(input datastruct.CreateAccountsRequest) 
 
 func (as *AccountService) GetAccount(id int) (datastruct.Account, error) {
 
-	if doc, found := as.accounts[id]; found {
+	if doc, found := as.Accounts[id]; found {
 		return datastruct.Account{Account_ID: id, Document_Number: doc}, nil
 	} else {
 		return datastruct.Account{}, fmt.Errorf("Account does not exists")
@@ -45,7 +48,7 @@ func (as *AccountService) GetAccount(id int) (datastruct.Account, error) {
 }
 func (as *AccountService) AccountExits(accountid int) bool {
 
-	if _, found := as.accounts[accountid]; found {
+	if _, found := as.Accounts[accountid]; found {
 		return true
 	}
 
