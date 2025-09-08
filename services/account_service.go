@@ -13,8 +13,9 @@ type AccountService struct {
 
 func NewAccountService() *AccountService {
 	return &AccountService{
-		owners:   make(map[string]int),
-		accounts: make(map[int]string),
+		owners:    make(map[string]int),
+		accounts:  make(map[int]string),
+		lastAccID: 0,
 	}
 }
 
@@ -25,6 +26,7 @@ func (as *AccountService) CreateAccount(input datastruct.CreateAccountsRequest) 
 		as.owners[input.Document_Number] = accid
 		as.accounts[accid] = input.Document_Number
 		as.lastAccID = accid
+		fmt.Print("Account created!")
 		return datastruct.Account{Account_ID: accid, Document_Number: input.Document_Number}, nil
 	} else {
 		return datastruct.Account{}, fmt.Errorf("Account Already exists")
@@ -40,4 +42,12 @@ func (as *AccountService) GetAccount(id int) (datastruct.Account, error) {
 		return datastruct.Account{}, fmt.Errorf("Account does not exists")
 	}
 
+}
+func (as *AccountService) AccountExits(accountid int) bool {
+
+	if _, found := as.accounts[accountid]; found {
+		return true
+	}
+
+	return false
 }

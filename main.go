@@ -13,16 +13,18 @@ func NewRouter() *mux.Router {
 	router := mux.NewRouter()
 
 	accountService := services.NewAccountService()
-	ai := &handlers.AccountHandler{Service: accountService}
+	as := &handlers.AccountHandler{Service: accountService}
 
-	router.HandleFunc("/accounts", ai.CreateAccountsHandler).Methods("POST")
-	router.HandleFunc("/accounts/{accountId}", ai.GetAccountsByIDHandler).Methods("GET")
+	transactionService := services.NewTransactionsService()
+	ts := &handlers.TransactionHandler{AccountService: accountService, TransactionService: transactionService}
+
+	router.HandleFunc("/accounts", as.CreateAccountsHandler).Methods("POST")
+	router.HandleFunc("/accounts/{accountId}", as.GetAccountsByIDHandler).Methods("GET")
+	router.HandleFunc("/transactions", ts.CreateTransactionHandler).Methods("POST")
 
 	return router
 }
 func main() {
-
-	http.ListenAndServe(":8080", NewRouter())
 	fmt.Println("Server is running on port 8080")
-
+	http.ListenAndServe(":8080", NewRouter())
 }
