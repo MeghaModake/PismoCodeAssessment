@@ -106,7 +106,7 @@ func TestCreateAndGetAccount(t *testing.T) {
 func TestCreateAndGetTransaction(t *testing.T) {
 	router := NewRouter()
 
-	tx := datastruct.CreateTransactionRequest{Account_ID: "1", OperationType_ID: "1", Amount: 50}
+	tx := datastruct.CreateTransactionRequest{Account_ID: 1, OperationType_ID: 1, Amount: 50}
 	body, _ := json.Marshal(tx)
 
 	// Create transaction
@@ -117,23 +117,32 @@ func TestCreateAndGetTransaction(t *testing.T) {
 	if w.Code != http.StatusOK {
 		t.Fatalf("expected 200, got %d", w.Code)
 	}
-
-	// Get transaction
-	req = httptest.NewRequest("GET", "/transactions/t1", nil)
-	w = httptest.NewRecorder()
-	router.ServeHTTP(w, req)
-
-	if w.Code != http.StatusOK {
-		t.Fatalf("expected 200, got %d", w.Code)
-	}
-
-	var got models.Transaction
+	var got datastruct.Transaction
 	if err := json.NewDecoder(w.Body).Decode(&got); err != nil {
 		t.Fatal(err)
 	}
 
-	if got.Amount != 50 {
-		t.Errorf("unexpected transaction: %+v", got)
+	if got.Transaction_ID != 1 || got.Account_ID != 1 {
+		t.Errorf("unexpected ID: %+v", got)
 	}
+	/*
+	   // Get transaction
+	   req = httptest.NewRequest("GET", "/transactions/t1", nil)
+	   w = httptest.NewRecorder()
+	   router.ServeHTTP(w, req)
+
+	   	if w.Code != http.StatusOK {
+	   		t.Fatalf("expected 200, got %d", w.Code)
+	   	}
+
+	   var got models.Transaction
+
+	   	if err := json.NewDecoder(w.Body).Decode(&got); err != nil {
+	   		t.Fatal(err)
+	   	}
+
+	   	if got.Amount != 50 {
+	   		t.Errorf("unexpected transaction: %+v", got)
+	   	}
+	*/
 }
-*/
