@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	customerrors "pismo-code-assessment/CustomErrors"
+	customerrors "pismo-code-assessment/customerror"
 	"pismo-code-assessment/datastruct"
 	"pismo-code-assessment/services"
 )

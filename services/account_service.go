@@ -3,7 +3,7 @@ package services
 import (
 	"fmt"
 	"log"
-	customerrors "pismo-code-assessment/CustomErrors"
+	customerrors "pismo-code-assessment/customerror"
 	"pismo-code-assessment/datastruct"
 	"sync"
 )
