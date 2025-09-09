@@ -27,7 +27,6 @@ func NewRouter(logger *log.Logger) *mux.Router {
 }
 func main() {
 	logger := log.New(os.Stdout, "PISMO_LOG: ", log.LstdFlags|log.Lshortfile)
-
 	logger.Printf("Starting server on port 8080")
 	if err := http.ListenAndServe(":8080", NewRouter(logger)); err != nil {
 		logger.Fatalf("Server failed: %v", err)

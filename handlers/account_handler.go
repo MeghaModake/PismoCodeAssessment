@@ -46,6 +46,7 @@ func (a *AccountHandler) CreateAccountsHandler(w http.ResponseWriter, r *http.Re
 
 func (a *AccountHandler) GetAccountsByIDHandler(w http.ResponseWriter, r *http.Request) {
 	a.Logger.Println("Received request to get account by ID")
+
 	param := mux.Vars(r)
 	id := param["accountId"]
 
@@ -53,7 +54,7 @@ func (a *AccountHandler) GetAccountsByIDHandler(w http.ResponseWriter, r *http.R
 	resp, err := a.Service.Get(idnumber)
 	if err != nil {
 		a.Logger.Println("Get account request failed!", err)
-		errResp := customerrors.ErrorResponse{ErrID: http.StatusInternalServerError, Errormsg: "failed to get accound", Details: err.Error()}
+		errResp := customerrors.ErrorResponse{ErrID: http.StatusInternalServerError, Errormsg: "failed to get account", Details: err.Error()}
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(errResp)
 		return
