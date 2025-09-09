@@ -1,0 +1,197 @@
+openapi: 3.1.0
+info:
+  title: Pismo API
+  version: 1.0.0
+  description: REST API for managing accounts and financial transactions
+servers:
+  - url: http://localhost:8080
+
+paths:
+  # --------------------------
+  # Accounts Endpoints
+  # --------------------------
+  /accounts:
+    post:
+      summary: Create a new account
+      operationId: createAccount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAccountsRequest'
+      responses:
+        '201':
+          description: Account created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '400':
+          description: Bad request (invalid input)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /accounts/{accountId}:
+    get:
+      summary: Get account by ID
+      operationId: getAccountById
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Account retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # --------------------------
+  # Transactions Endpoints
+  # --------------------------
+  /transactions:
+    post:
+      summary: Create a transaction
+      operationId: createTransaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTransactionRequest'
+      responses:
+        '201':
+          description: Transaction created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '400':
+          description: Invalid request (bad JSON or missing fields)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation failed (business logic error)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    # --------------------------
+    # Account Schemas
+    # --------------------------
+    CreateAccountsRequest:
+      type: object
+      required:
+        - name
+        - document
+      properties:
+        name:
+          type: string
+          example: John Doe
+        document:
+          type: string
+          example: 12345678901
+
+    Account:
+      type: object
+      properties:
+        account_id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: John Doe
+        document:
+          type: string
+          example: 12345678901
+        created_at:
+          type: string
+          format: date-time
+          example: 2025-09-09T12:34:56Z
+
+    # --------------------------
+    # Transaction Schemas
+    # --------------------------
+    CreateTransactionRequest:
+      type: object
+      required:
+        - account_id
+        - operation_type_id
+        - amount
+      properties:
+        account_id:
+          type: integer
+          example: 1
+        operation_type_id:
+          type: integer
+          example: 4
+        amount:
+          type: number
+          format: float
+          example: 150.00
+
+    Transaction:
+      type: object
+      properties:
+        transaction_id:
+          type: integer
+          example: 1001
+        account_id:
+          type: integer
+          example: 1
+        operation_type_id:
+          type: integer
+          example: 4
+        amount:
+          type: number
+          format: float
+          example: 150.00
+        event_date:
+          type: string
+          format: date-time
+          example: 2025-09-09T12:34:56Z
+
+    # --------------------------
+    # Generic Error Schema
+    # --------------------------
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: failed to create account
+        details:
+          type: string
+          example: invalid input
+        requestID:
+          type: string
+          example: "123e4567-e89b-12d3-a456-426614174000"
