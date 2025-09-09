@@ -3,14 +3,17 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"log"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"pismo-code-assessment/datastruct"
 	"testing"
 )
 
 func TestCreateAndGetAccount(t *testing.T) {
-	router := NewRouter()
+	logger := log.New(os.Stdout, "TEST_log", log.LstdFlags)
+	router := NewRouter(logger)
 
 	// Create account
 	acc := datastruct.CreateAccountsRequest{Document_Number: "100"}
@@ -104,7 +107,8 @@ func TestCreateAndGetAccount(t *testing.T) {
 }
 
 func TestCreateAndGetTransaction(t *testing.T) {
-	router := NewRouter()
+	logger := log.New(os.Stdout, "TEST_log", log.LstdFlags)
+	router := NewRouter(logger)
 
 	tx := datastruct.CreateTransactionRequest{Account_ID: 1, OperationType_ID: 1, Amount: 50}
 	body, _ := json.Marshal(tx)

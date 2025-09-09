@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -11,9 +10,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func NewRouter() *mux.Router {
+func NewRouter(logger *log.Logger) *mux.Router {
 	router := mux.NewRouter()
-	logger := log.New(os.Stdout, "APP_LOG: ", log.LstdFlags|log.Lshortfile)
 
 	accountService := services.NewAccountService(logger)
 	as := &handlers.AccountHandler{Service: accountService, Logger: logger}
@@ -28,6 +26,12 @@ func NewRouter() *mux.Router {
 	return router
 }
 func main() {
-	fmt.Println("Starting a server on port 8080")
-	http.ListenAndServe(":8080", NewRouter())
+	logger := log.New(os.Stdout, "PISMO_LOG: ", log.LstdFlags|log.Lshortfile)
+
+	logger.Printf("Starting server on port 8080")
+	if err := http.ListenAndServe(":8080", NewRouter(logger)); err != nil {
+		logger.Fatalf("Server failed: %v", err)
+	}
+
+	logger.Println("Server exited")
 }

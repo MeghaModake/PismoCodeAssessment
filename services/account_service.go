@@ -45,8 +45,8 @@ func (as *AccountService) GetAccount(id int) (datastruct.Account, error) {
 		as.Logger.Println("Account Info retrived !")
 		return datastruct.Account{Account_ID: id, Document_Number: doc}, nil
 	} else {
-		as.Logger.Printf("Error %s while getting Account with account id %d!\n", customerrors.INVALIDACCOUNTID, id)
-		return datastruct.Account{}, fmt.Errorf(customerrors.INVALIDACCOUNTID)
+		as.Logger.Printf("Error while getting Account with account id %d!\n", id)
+		return datastruct.Account{}, fmt.Errorf(customerrors.INVALIDACCOUNTID, id)
 	}
 
 }
