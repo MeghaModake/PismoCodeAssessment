@@ -32,13 +32,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse400'
         '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse500'
 
   /accounts/{accountId}:
     get:
@@ -111,13 +111,9 @@ components:
     CreateAccountsRequest:
       type: object
       required:
-        - name
-        - document
+        - document_number
       properties:
-        name:
-          type: string
-          example: John Doe
-        document:
+        document_number:
           type: string
           example: 12345678901
 
@@ -127,16 +123,9 @@ components:
         account_id:
           type: integer
           example: 1
-        name:
-          type: string
-          example: John Doe
-        document:
+        document_number:
           type: string
           example: 12345678901
-        created_at:
-          type: string
-          format: date-time
-          example: 2025-09-09T12:34:56Z
 
     # --------------------------
     # Transaction Schemas
@@ -157,7 +146,7 @@ components:
         amount:
           type: number
           format: float
-          example: 150.00
+          example: 123.45
 
     Transaction:
       type: object
@@ -174,24 +163,32 @@ components:
         amount:
           type: number
           format: float
-          example: 150.00
-        event_date:
-          type: string
-          format: date-time
-          example: 2025-09-09T12:34:56Z
+          example: 123.45
 
     # --------------------------
     # Generic Error Schema
     # --------------------------
-    ErrorResponse:
+    ErrorResponse500:
       type: object
       properties:
-        error:
+        error_id:
+          type: number
+          example: :500
+        error_message:
           type: string
-          example: failed to create account
-        details:
+          example: validation failed
+        error_details:
           type: string
-          example: invalid input
-        requestID:
+          example: "Wrong Account ID, Account does not exists: 1"
+    ErrorResponse400:
+      type: object
+      properties:
+        error_id:
+          type: number
+          example: :400
+        error_message:
           type: string
-          example: "123e4567-e89b-12d3-a456-426614174000"
+          example: invalid request
+        error_details:
+          type: string
+          example: "Wrong input"

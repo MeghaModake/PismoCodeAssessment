@@ -8,6 +8,13 @@ type CreateTransactionRequest struct {
 	Amount           float64 `json:"amount"`
 }
 
+type CreateTransactionResponse struct {
+	Transaction_ID   int     `json:"transaction_id"`
+	Account_ID       int     `json:"account_id"`
+	OperationType_ID int     `json:"operation_type_id"`
+	Amount           float64 `json:"amount"`
+}
+
 type Transaction struct {
 	Transaction_ID   int
 	Account_ID       int
