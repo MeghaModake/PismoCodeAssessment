@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	customerrors "pismo-code-assessment/CustomErrors"
 	"pismo-code-assessment/datastruct"
 	"pismo-code-assessment/services"
 )
@@ -21,11 +22,11 @@ func (t *TransactionHandler) IsValidateRequest(req datastruct.CreateTransactionR
 		return fmt.Errorf("Invalid request input, missing required %v", req)
 	}
 	if !t.AccountService.AccountExits(req.Account_ID) {
-		return fmt.Errorf("Invalid account_id %v", req.Account_ID)
+		return fmt.Errorf(customerrors.INVALIDACCOUNTID, req.Account_ID)
 	}
 
 	switch req.OperationType_ID {
-	case 1, 2, 3: // All good
+	case 1, 2, 3: // Amount can be postive or negative all good
 	case 4:
 		if req.Amount < 0 {
 			return fmt.Errorf("Ammount can not be negative for given operation_type_id %v", req.OperationType_ID)
@@ -57,5 +58,11 @@ func (t *TransactionHandler) CreateTransactionHandler(w http.ResponseWriter, r *
 		return
 	}
 
+	// return status created
+
+	//
+
+	//
+	//
 	json.NewEncoder(w).Encode(resp)
 }

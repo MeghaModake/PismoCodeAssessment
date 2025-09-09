@@ -28,6 +28,6 @@ func NewRouter() *mux.Router {
 	return router
 }
 func main() {
-	fmt.Println("Server is running on port 8080")
+	fmt.Println("Starting a server on port 8080")
 	http.ListenAndServe(":8080", NewRouter())
 }

@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 	"log"
+	customerrors "pismo-code-assessment/CustomErrors"
 	"pismo-code-assessment/datastruct"
 )
 
@@ -32,7 +33,8 @@ func (as *AccountService) CreateAccount(input datastruct.CreateAccountsRequest) 
 		as.Logger.Println("Account created!")
 		return datastruct.Account{Account_ID: accid, Document_Number: input.Document_Number}, nil
 	} else {
-		return datastruct.Account{}, fmt.Errorf("Account Already exists")
+		as.Logger.Printf("Error %s while creating Account with Document_Number %s!\n", customerrors.ACCOUNTEXISTS, input.Document_Number)
+		return datastruct.Account{}, fmt.Errorf(customerrors.ACCOUNTEXISTS)
 	}
 
 }
@@ -40,9 +42,11 @@ func (as *AccountService) CreateAccount(input datastruct.CreateAccountsRequest) 
 func (as *AccountService) GetAccount(id int) (datastruct.Account, error) {
 
 	if doc, found := as.Accounts[id]; found {
+		as.Logger.Println("Account Info retrived !")
 		return datastruct.Account{Account_ID: id, Document_Number: doc}, nil
 	} else {
-		return datastruct.Account{}, fmt.Errorf("Account does not exists")
+		as.Logger.Printf("Error %s while getting Account with account id %d!\n", customerrors.INVALIDACCOUNTID, id)
+		return datastruct.Account{}, fmt.Errorf(customerrors.INVALIDACCOUNTID)
 	}
 
 }
