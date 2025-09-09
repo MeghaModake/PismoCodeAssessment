@@ -16,7 +16,7 @@ func IsValidateRequestSub(inputAccountID int, inputOperationTypeID int, inputAmo
 	req.Account_ID = inputAccountID
 	req.OperationType_ID = inputOperationTypeID
 	req.Amount = inputAmount
-	if err := ts.IsValidateRequest(req); err != nil {
+	if err := ts.ValidateRequest(req); err != nil {
 		return false
 	}
 
@@ -32,7 +32,7 @@ func setup() {
 	// create account with Document_Number = 101 which will have account id = 1
 	var req datastruct.CreateAccountsRequest
 	req.Document_Number = "101"
-	_, err := ts.AccountService.CreateAccount(req)
+	_, err := ts.AccountService.Create(req)
 	if err != nil {
 		// add logger
 	}

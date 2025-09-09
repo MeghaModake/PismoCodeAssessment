@@ -32,6 +32,4 @@ func main() {
 	if err := http.ListenAndServe(":8080", NewRouter(logger)); err != nil {
 		logger.Fatalf("Server failed: %v", err)
 	}
-
-	logger.Println("Server exited")
 }

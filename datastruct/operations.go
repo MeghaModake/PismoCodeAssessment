@@ -23,3 +23,10 @@ var operations = map[int]string{
 	3: "WITHDRAWAL",
 	4: "PAYMENT",
 }
+
+const (
+	OpPurchase    = 1
+	OpInstallment = 2
+	OpWithdrawal  = 3
+	OpPayment     = 4
+)

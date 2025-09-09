@@ -110,6 +110,7 @@ func TestCreateAndGetAccount(t *testing.T) {
 		t.Errorf("unexpected account: %+v", got)
 	}
 
+	// negative test , should fail
 	req = httptest.NewRequest("GET", "/accounts/3", nil)
 	w = httptest.NewRecorder()
 	router.ServeHTTP(w, req)

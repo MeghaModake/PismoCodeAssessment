@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	customerrors "pismo-code-assessment/CustomErrors"
 	"pismo-code-assessment/datastruct"
 	"pismo-code-assessment/services"
 	"strconv"
@@ -19,14 +20,21 @@ type AccountHandler struct {
 func (a *AccountHandler) CreateAccountsHandler(w http.ResponseWriter, r *http.Request) {
 	a.Logger.Println("Received request to create account")
 	var inputdata datastruct.CreateAccountsRequest
+	defer r.Body.Close()
 	if err := json.NewDecoder(r.Body).Decode(&inputdata); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		a.Logger.Println("Create account request failed!", err)
+		errResp := customerrors.ErrorResponse{ErrID: http.StatusBadRequest, Errormsg: "failed to encode input", Details: err.Error()}
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(errResp)
 		return
 	}
 
-	respCreated, err := a.Service.CreateAccount(inputdata)
+	respCreated, err := a.Service.Create(inputdata)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		a.Logger.Println("Create account request failed!", err)
+		errResp := customerrors.ErrorResponse{ErrID: http.StatusInternalServerError, Errormsg: "failed to create accound", Details: err.Error()}
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(errResp)
 		return
 	}
 
@@ -42,9 +50,12 @@ func (a *AccountHandler) GetAccountsByIDHandler(w http.ResponseWriter, r *http.R
 	id := param["accountId"]
 
 	idnumber, _ := strconv.Atoi(id)
-	resp, err := a.Service.GetAccount(idnumber)
+	resp, err := a.Service.Get(idnumber)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		a.Logger.Println("Get account request failed!", err)
+		errResp := customerrors.ErrorResponse{ErrID: http.StatusInternalServerError, Errormsg: "failed to get accound", Details: err.Error()}
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(errResp)
 		return
 	}
 

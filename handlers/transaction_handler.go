@@ -16,20 +16,27 @@ type TransactionHandler struct {
 	Logger             *log.Logger
 }
 
-func (t *TransactionHandler) IsValidateRequest(req datastruct.CreateTransactionRequest) error {
+func (t *TransactionHandler) ValidateRequest(req datastruct.CreateTransactionRequest) error {
 
-	if req.Account_ID == 0 || req.OperationType_ID == 0 || req.Amount == 0 {
-		return fmt.Errorf("Invalid request input, missing required %v", req)
+	if req.Account_ID == 0 {
+		return fmt.Errorf("account_id is required")
 	}
-	if !t.AccountService.AccountExits(req.Account_ID) {
-		return fmt.Errorf(customerrors.INVALIDACCOUNTID, req.Account_ID)
+	if req.OperationType_ID == 0 {
+		return fmt.Errorf("operation_type_id is required")
+	}
+	if req.Amount == 0 {
+		return fmt.Errorf("amount must not be zero")
+	}
+
+	if !t.AccountService.AccountExists(req.Account_ID) {
+		return fmt.Errorf("%w: %d", customerrors.INVALIDACCOUNTID, req.Account_ID)
 	}
 
 	switch req.OperationType_ID {
-	case 1, 2, 3: // Amount can be postive or negative all good
-	case 4:
+	case datastruct.OpPurchase, datastruct.OpInstallment, datastruct.OpWithdrawal: // Amount can be postive or negative all good
+	case datastruct.OpPayment:
 		if req.Amount < 0 {
-			return fmt.Errorf("Ammount can not be negative for given operation_type_id %v", req.OperationType_ID)
+			return fmt.Errorf("Ammount must be positive for given operation_type_id %v", req.OperationType_ID)
 		}
 	default:
 		return fmt.Errorf("Invalid operation_type_id %v", req.OperationType_ID)
@@ -41,20 +48,27 @@ func (t *TransactionHandler) CreateTransactionHandler(w http.ResponseWriter, r *
 
 	t.Logger.Println("Received request to create transaction")
 	var req datastruct.CreateTransactionRequest
+	defer r.Body.Close()
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	if err := t.IsValidateRequest(req); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	if err := t.ValidateRequest(req); err != nil {
+		t.Logger.Println("Creating transaction request failed!", err)
+		errResp := customerrors.ErrorResponse{ErrID: http.StatusBadRequest, Errormsg: "validation failed", Details: err.Error()}
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(errResp)
 		return
 	}
 
-	var resp datastruct.Transaction
+	var resp *datastruct.Transaction
 
-	resp, err := t.TransactionService.CreateTransaction(req)
+	resp, err := t.TransactionService.Create(req)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		t.Logger.Println("Creating transaction request failed!", err)
+		errResp := customerrors.ErrorResponse{ErrID: http.StatusInternalServerError, Errormsg: "failed to create transaction", Details: err.Error()}
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(errResp)
 		return
 	}
 
