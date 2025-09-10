@@ -60,6 +60,8 @@ func (as *AccountService) Get(id int) (datastruct.Account, error) {
 }
 func (as *AccountService) AccountExists(accountid int) bool {
 
+	as.mu.Lock()
+	defer as.mu.Unlock()
 	if _, found := as.Accounts[accountid]; found {
 		return true
 	}

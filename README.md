@@ -16,6 +16,11 @@ go build
 docker build -t pismo-assignment-megha .
 
 
+## Unit Tests 
+// Run test cases are written in main_test.go transaction_handler_test.go test files
+go test ./... 
+
+
 ## Running & Testing the Project
 
 docker run -p 8080:8080 pismo-assignment-megha

@@ -6,6 +6,7 @@ import (
 	"os"
 	"pismo-code-assessment/handlers"
 	"pismo-code-assessment/services"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -19,9 +20,23 @@ func NewRouter(logger *log.Logger) *mux.Router {
 	transactionService := services.NewTransactionsService(logger)
 	ts := &handlers.TransactionHandler{AccountService: accountService, TransactionService: transactionService, Logger: logger}
 
-	router.HandleFunc("/accounts", as.CreateAccountsHandler).Methods("POST")
-	router.HandleFunc("/accounts/{accountId}", as.GetAccountsByIDHandler).Methods("GET")
-	router.HandleFunc("/transactions", ts.CreateTransactionHandler).Methods("POST")
+	router.Handle("/accounts",
+		http.TimeoutHandler(http.HandlerFunc(as.CreateAccountHandler),
+			5*time.Second,
+			"Request timed out"),
+	).Methods("POST")
+
+	router.Handle("/accounts/{accountId}",
+		http.TimeoutHandler(http.HandlerFunc(as.GetAccountByIDHandler),
+			3*time.Second,
+			"Request timed out"),
+	).Methods("GET")
+
+	router.Handle("/transactions",
+		http.TimeoutHandler(http.HandlerFunc(ts.CreateTransactionHandler),
+			5*time.Second,
+			"Request timed out"),
+	).Methods("POST")
 
 	return router
 }

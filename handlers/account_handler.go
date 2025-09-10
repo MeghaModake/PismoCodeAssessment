@@ -17,7 +17,7 @@ type AccountHandler struct {
 	Logger  *log.Logger
 }
 
-func (a *AccountHandler) CreateAccountsHandler(w http.ResponseWriter, r *http.Request) {
+func (a *AccountHandler) CreateAccountHandler(w http.ResponseWriter, r *http.Request) {
 	a.Logger.Println("Received request to create account")
 	var inputdata datastruct.CreateAccountsRequest
 	defer r.Body.Close()
@@ -44,7 +44,7 @@ func (a *AccountHandler) CreateAccountsHandler(w http.ResponseWriter, r *http.Re
 
 }
 
-func (a *AccountHandler) GetAccountsByIDHandler(w http.ResponseWriter, r *http.Request) {
+func (a *AccountHandler) GetAccountByIDHandler(w http.ResponseWriter, r *http.Request) {
 	a.Logger.Println("Received request to get account by ID")
 
 	param := mux.Vars(r)
