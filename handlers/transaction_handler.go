@@ -8,6 +8,8 @@ import (
 	customerrors "pismo-code-assessment/customerror"
 	"pismo-code-assessment/datastruct"
 	"pismo-code-assessment/services"
+
+	"github.com/google/uuid"
 )
 
 type TransactionHandler struct {
@@ -46,7 +48,11 @@ func (t *TransactionHandler) ValidateRequest(req datastruct.CreateTransactionReq
 }
 func (t *TransactionHandler) CreateTransactionHandler(w http.ResponseWriter, r *http.Request) {
 
+	requestID := uuid.New().String()
+
 	t.Logger.Println("Received request to create transaction")
+	t.Logger.Printf("[request_id=%s] handling transaction creation", requestID) // TODO :further include requestID in all logs to track
+
 	var req datastruct.CreateTransactionRequest
 	defer r.Body.Close()
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {

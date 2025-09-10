@@ -9,6 +9,7 @@ import (
 	"pismo-code-assessment/services"
 	"strconv"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
 
@@ -18,7 +19,11 @@ type AccountHandler struct {
 }
 
 func (a *AccountHandler) CreateAccountHandler(w http.ResponseWriter, r *http.Request) {
+	requestID := uuid.New().String()
+
 	a.Logger.Println("Received request to create account")
+	a.Logger.Printf("[request_id=%s] handling account creation", requestID) // TODO: further include requestID in all logs to track
+
 	var inputdata datastruct.CreateAccountsRequest
 	defer r.Body.Close()
 	if err := json.NewDecoder(r.Body).Decode(&inputdata); err != nil {
@@ -45,7 +50,11 @@ func (a *AccountHandler) CreateAccountHandler(w http.ResponseWriter, r *http.Req
 }
 
 func (a *AccountHandler) GetAccountByIDHandler(w http.ResponseWriter, r *http.Request) {
+
+	requestID := uuid.New().String()
+
 	a.Logger.Println("Received request to get account by ID")
+	a.Logger.Printf("[request_id=%s] handling account retrival", requestID) // TODO: further include requestID in all logs to track
 
 	param := mux.Vars(r)
 	id := param["accountId"]
