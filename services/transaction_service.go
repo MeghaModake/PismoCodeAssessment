@@ -3,6 +3,7 @@ package services
 import (
 	"log"
 	"pismo-code-assessment/datastruct"
+	"sort"
 	"sync"
 	"time"
 )
@@ -39,7 +40,7 @@ func (ts *TransactionsService) ListNegativeTransactions(accid int) []datastruct.
 	for _, v := range ts.Transactions {
 		if v.Account_ID == accid && v.Amount < 0 && v.Balance < 0 {
 			listtransaction = append(listtransaction, v)
-			ts.Logger.Println("Added Transaction into list! %d", v.Transaction_ID)
+			ts.Logger.Println("Added Transaction into list!", v.Transaction_ID)
 		}
 	}
 
@@ -50,8 +51,19 @@ func (ts *TransactionsService) UpdateEarlierTransactionBalance(req datastruct.Cr
 
 	ts.Logger.Println("Updating old Transactions!", len(oldTrns))
 
+	//Extract values into a slice
+	transactions := make([]datastruct.Transaction, 0, len(oldTrns))
+	for _, tx := range oldTrns {
+		transactions = append(transactions, tx)
+	}
+
+	//Sort by EventDate (earliest first)
+	sort.Slice(transactions, func(i, j int) bool {
+		return transactions[i].EventDate.Before(transactions[j].EventDate)
+	})
+
 	remainingbalance := amount
-	for _, v := range oldTrns {
+	for _, v := range transactions {
 		var currbalance float64
 		remainingbalance = v.Balance + remainingbalance
 		if remainingbalance >= 0 {
@@ -148,6 +160,17 @@ func (ts *TransactionsService) Create(req datastruct.CreateTransactionRequest) (
 		ts.LastTransactionID = trnID
 
 	}
+
+	//Extract values into a slice
+	transactions := make([]datastruct.Transaction, 0, len(ts.Transactions))
+	for _, tx := range ts.Transactions {
+		transactions = append(transactions, tx)
+	}
+
+	//Sort by EventDate (earliest first)
+	sort.Slice(transactions, func(i, j int) bool {
+		return transactions[i].EventDate.Before(transactions[j].EventDate)
+	})
 
 	ts.Logger.Println("Printing all transactions!")
 	for _, v := range ts.Transactions {
