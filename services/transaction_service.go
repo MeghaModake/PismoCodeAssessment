@@ -72,6 +72,7 @@ func (ts *TransactionsService) UpdateEarlierTransactionBalance(req datastruct.Cr
 		ts.mu.Unlock()
 
 		if remainingbalance <= 0 {
+			remainingbalance = 0
 			break
 		}
 	}
