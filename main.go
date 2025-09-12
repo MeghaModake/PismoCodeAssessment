@@ -33,14 +33,13 @@ func NewRouter(logger *log.Logger) *mux.Router {
 	).Methods("GET")
 
 	router.Handle("/transactions",
-		http.TimeoutHandler(http.HandlerFunc(ts.CreateTransactionHandler),
-			5*time.Second,
-			"Request timed out"),
+		http.HandlerFunc(ts.CreateTransactionHandler),
 	).Methods("POST")
 
 	return router
 }
 func main() {
+
 	logger := log.New(os.Stdout, "PISMO_LOG: ", log.LstdFlags|log.Lshortfile)
 	logger.Printf("Starting server on port 8080")
 	if err := http.ListenAndServe(":8080", NewRouter(logger)); err != nil {

@@ -60,7 +60,7 @@ func (t *TransactionHandler) CreateTransactionHandler(w http.ResponseWriter, r *
 		return
 	}
 	if err := t.ValidateRequest(req); err != nil {
-		t.Logger.Println("Creating transaction request failed!", err)
+		t.Logger.Println("Validating transaction request failed!", err)
 		errResp := customerrors.ErrorResponse{ErrID: http.StatusBadRequest, Errormsg: "validation failed", Details: err.Error()}
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(errResp)
